@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta   name="author" content="Imane Ghaffour">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../static/css/styles.css">
+    </head>
+    <body>
+        <header>
+            <img src="../static/img/logo2go.jpg"  id="logo" >
+        </header>
+        <div class="header-container">
+            <div class="page-header"></div>
+                <h1>Diabetic retinopathy </h1>
+
+
+
+                <nav class="navbar navbar-expand-lg bg-body-tertiary">
+                    <div class="container-fluid">
+
+                        <div class="collapse navbar-collapse" id="navbarText">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li class="nav-item">
+                                <a class="nav-link active text-white-50" aria-current="page" href="#">Home</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link text-white-50" href="#">Symptoms</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link text-white-50" href="#">Causes</a>
+                                </li>
+                                <li class="nav-item">
+                                <a class="nav-link text-white-50" href="/diagnostic">Diagnostic</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+
+            </div>
+        </div>
+
+
+        {% block content %}
+        {% endblock %}
+
+    </body>
+
+</html>
