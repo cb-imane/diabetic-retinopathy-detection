@@ -47,4 +47,4 @@ print(df.shape)
 
 df_cleaned = remove_collinear_features(df,0.9)
 
-df_cleaned.to_pickle("../data/data_retino_preprocessed.pkl")
+df_cleaned.to_pickle("trained_data/data_retino_preprocessed.pkl")
