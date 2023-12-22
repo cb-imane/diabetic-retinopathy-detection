@@ -5,6 +5,7 @@ import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel #  for Data validation as class models
 from typing import List
+import uvicorn
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -110,3 +111,72 @@ async def train_model(model_train: ModelTrainIn): # this defines the data model 
     return model_train_dict 
 
 
+class PredictionParams(BaseModel):
+    train_id: str = "e2a94cc00a284a2a865804926769e21f.pkl"
+    ma1:int
+    exudate1:float
+    exudate2:float
+    exudate3:float
+    exudate31:float
+    exudate5: float
+    macula_opticdisc_distance:float
+    opticdisc_diameter:float
+    am_fm_classification:int
+    #model_name: str = 'lr_model.pkl'
+                    
+
+class Predictionresult(BaseModel):
+    train_id: str
+    prediction:int
+
+
+DIABETIC_RETINOPATHY = {
+    0: 'negative dr',
+    1: 'positive dr'
+    }
+
+def load_data(model_name):
+    with open(model_name,'rb') as f:
+        model = pickle.load(f)
+    return model    
+
+@app.post("/model/predict/", response_model=Predictionresult)
+async def predict_dr(query_data: PredictionParams):
+    query_data_dict = query_data.dict()
+    model_id = query_data_dict['train_id']
+    # loading the saved ML Model
+    model = pickle.load(open(f"trained_models/{model_id}.pkl", 'rb'))
+	
+    ma1 = query_data.ma1
+    exudate1 = query_data.exudate1
+    exudate2 = query_data.exudate2
+    exudate3 = query_data.exudate3
+    exudate31 = query_data.exudate1
+    exudate5 = query_data.exudate5
+    macula_opticdisc_distance = query_data.macula_opticdisc_distance
+    opticdisc_diameter = query_data.opticdisc_diameter
+    am_fm_classification = query_data.am_fm_classification
+
+    pred = model.predict([[
+        ma1,
+        exudate1,
+        exudate2,
+        exudate3,
+        exudate31,
+        exudate5,
+        macula_opticdisc_distance,
+        opticdisc_diameter,
+        am_fm_classification
+
+    ]])
+
+    return {
+        "prediction": pred,
+        "train_id": model_id
+    }
+
+
+if __name__ == "__main__":
+    
+    debug=True
+    uvicorn.run(app, host="localhost", port=8000)
