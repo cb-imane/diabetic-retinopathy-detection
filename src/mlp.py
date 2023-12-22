@@ -1,0 +1,65 @@
+import pandas as pd
+import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.callbacks import TensorBoard
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score,recall_score,confusion_matrix,precision_score,f1_score
+
+
+
+df = pd.read_pickle("../data/data_retino_preprocessed.pkl")
+print(df.columns)
+
+X = df.drop('Class',axis=1).values
+y = df['Class'].values
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,stratify=y)
+
+scaler = MinMaxScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Define the neural network model
+def model(input_dim):
+    model = models.Sequential()
+    model.add(tf.keras.layers.Dense(256, input_dim=input_dim, activation='relu'))
+    #model.add(layers.Dense(256, activation='relu'))
+    #model.add(layers.Dropout(0.5))  # Dropout layer for regularization
+    model.add(layers.Dense(128, activation='relu'))
+    model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dropout(0.3))  # Dropout layer for regularization
+    model.add(layers.Dense(1, activation='sigmoid'))  # Binary classification, so use 'sigmoid' activation
+    
+    return model
+# Compile the model
+retino_model = model(X_train_scaled.shape[1])
+retino_model.compile(optimizer='adam',
+              loss='binary_crossentropy',  # Binary classification loss
+              metrics=['accuracy'])
+
+# Display the model summary
+print(retino_model.summary())
+callbacks = [EarlyStopping(monitor='val_loss', patience=100),
+             TensorBoard(log_dir='./Graph', histogram_freq=0, write_graph=True, write_images=True)]
+
+retino_model.fit(x=X_train_scaled, y=y_train, validation_data=(X_test_scaled, y_test), epochs=300, batch_size=32)
+
+    
+
+
+
+
+predictions_cnn = retino_model.predict(X_test_scaled)
+binary_predictions = (predictions_cnn > 0.5).astype(int)
+#score = model.evaluate(y_test,y_pred_cnn)
+accuracy = accuracy_score(y_test, binary_predictions)
+precision = precision_score(y_test, binary_predictions)
+recall = recall_score(y_test, binary_predictions)
+f1 = f1_score(y_test, binary_predictions)
+confusion_mat = confusion_matrix(y_test, binary_predictions)
+print(confusion_mat)
+print(f"The accuracy score of the cnn Model is {round(accuracy,2)}")
+print(f"The recall score of the CNN Model is {round(recall,2)}")
+print(f"The F1 score of the CNN is {round(f1,2)}")
