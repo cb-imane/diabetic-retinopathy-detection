@@ -26,8 +26,9 @@ def model(input_dim):
     model.add(tf.keras.layers.Dense(256, input_dim=input_dim, activation='relu'))
     #model.add(layers.Dense(256, activation='relu'))
     #model.add(layers.Dropout(0.5))  # Dropout layer for regularization
-    model.add(layers.Dense(128, activation='relu'))
+    model.add(layers.Dense(128, activation='relu',kernel_regularizer=tf.keras.regularizers.l2(0.01)))
     model.add(layers.Dense(64, activation='relu'))
+    
     model.add(layers.Dense(64, activation='relu'))
     model.add(layers.Dropout(0.3))  # Dropout layer for regularization
     model.add(layers.Dense(1, activation='sigmoid'))  # Binary classification, so use 'sigmoid' activation
