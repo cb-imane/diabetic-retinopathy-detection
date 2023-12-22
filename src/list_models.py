@@ -27,4 +27,17 @@ X_test_scaled = scaler.transform(X_test)
 
 
 
+sgd = SGDClassifier()
+sgd.fit(X_train,y_train)
+y_pred_sgd = sgd.predict(X_test)
+acc_sgd  = accuracy_score(y_test,y_pred_sgd)
+recall_score_sgd = recall_score(y_test,y_pred_sgd)
+f1_score_sgd = f1_score(y_test,y_pred_sgd)
+
+print("Model has an accuracy of {}".format(acc_sgd))
+
+print(f"The recall score of the SGD Model is {round(recall_score_sgd,2)}")
+print(f"The F1 score of the SGD Model is {round(f1_score_sgd,2)}")
+
+print(classification_report(y_test,y_pred_sgd))
 
