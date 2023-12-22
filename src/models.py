@@ -9,13 +9,16 @@ from sklearn.metrics import f1_score,recall_score,accuracy_score
 from sklearn.tree import DecisionTreeClassifier
 
 
+from sklearn.ensemble import RandomForestClassifier
+
+
 df = pd.read_pickle("../data/data_retino_preprocessed.pkl")
 print(df.columns)
 
 X = df.drop('Class',axis=1).values
 y = df['Class'].values
-
 X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.2,stratify=y)
+
 model = DecisionTreeClassifier() # Per default, criterion="gini"; you could specify criterion="entropy"
 model.fit(X_train,y_train)
 y_pred = model.predict(X_test)
@@ -46,8 +49,19 @@ unique_id = uuid.uuid4().hex
 if not os.path.exists("trained_models"):
     os.makedirs("trained_models")
 
-with open(f"trained_models/{unique_id}.pkl",'wb') as f:
+with open(f"trained_models/dt-{unique_id}.pkl",'wb') as f:
     pickle.dump(model,f)
 
+
+rf = RandomForestClassifier(n_estimators=100)
+rf.fit(X_train,y_train)
+y_pred_rf = rf.predict(X_test)
+acc_rf = accuracy_score(y_test, y_pred_rf)
+recall_rf = recall_score(y_test, y_pred_rf)
+f1_rf = f1_score(y_test, y_pred_rf)
+print(f"Random Forest model has an accuracy of {acc_rf}, recall of {recall_rf} and f1 score of {f1_rf}")
+
+with open(f"trained_models/rf-{unique_id}.pkl",'wb') as f:
+    pickle.dump(rf,f)
 
 
