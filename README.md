@@ -1,5 +1,6 @@
 #installation
-git clone https://github.com/cb-imane/diabetic-retinopathy-detection/
+git clone https://github.com/cb-imane/diabetic-retinopathy-detection.git
+
 
 **Navigate to the Project Directory:**
     ```bash
