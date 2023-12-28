@@ -10,9 +10,9 @@ DR_CLASSES = {
 
 }
 app = Flask(__name__)
-model = pickle.load(open(f"../src/trained_models/1f51d988d0ac47e9b6faeb95a851a27b.pkl", "rb"))
-
-
+#model = pickle.load(open(f"../src/trained_models/1f51d988d0ac47e9b6faeb95a851a27b.pkl", "rb"))
+#model = pickle.load(f"../src/trained_models/e2a94cc00a284a2a865804926769e21f.pkl","rb")
+model=pickle.load(open("../src/trained_models/65beb5dc65504ab490177d5b45138e0b.sav","rb"))
 
 
 class FormQuery(BaseModel):
@@ -25,7 +25,7 @@ class FormQuery(BaseModel):
     exudate5: float
     macula_opticdisc_distance: float
     opticdisc_diameter: float
-    am_fm_classification: int
+    
 
 
 
@@ -33,8 +33,14 @@ class FormQuery(BaseModel):
 def home():
     return render_template("index.html")
 
-@app.route("/diagnostic", methods=['GET', 'POST'])
-def get_predict():
+
+
+@app.route("/diagnosis/", methods=["GET"])
+def dr_features():
+    return render_template("form.html")
+
+@app.route("/prediction/", methods=['GET', 'POST'])
+def get_prediction():
     if request.method == 'POST':
         ma1 = request.form.get('Ma1',22)
 
@@ -45,9 +51,8 @@ def get_predict():
         exudate5 = request.form.get('Exudate5',0.018632	)
         macula_opticdisc_distance = request.form.get('MaculaOpticdiscDistance',0.486903)
         opticdisc_diameter = request.form.get('OpticdiscDiameter',0.100025)
-        am_fm_classification = request.form.get('AmFm',1)
-
-        result = model.predict(
+        
+        pred = model.predict(
             [
                 [
                     ma1,
@@ -57,18 +62,13 @@ def get_predict():
                     exudate31,
                     exudate5,
                     macula_opticdisc_distance,
-                    opticdisc_diameter,
-                    am_fm_classification
+                    opticdisc_diameter
+                    
                 ]
             ]
         )[0]
-        print("working",result)
-    return render_template("prediction.html",prediction="Positive DR")
-
-@app.route("/prediction",methods=['POST'])
-def predict_result():
-    return render_template("diagnostic.html")
-
+        print("working",pred)
+    return render_template("prediction.html",prediction=DR_CLASSES["pred"])
 
 
 
@@ -98,4 +98,9 @@ def api_result():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    
+    
+    app.run(
+        host='0.0.0.0',
+        port=5001,
+        debug=True)
