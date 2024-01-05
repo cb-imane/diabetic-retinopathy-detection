@@ -27,7 +27,12 @@ h1 {
     margin-right: 10px;
     justify-content: center
 }
+#img-retina {
 
+    height: 400px;
+    max-width: 80% ;
+
+}
 .navbar {
     flex-grow: 1;
     display:flex;
