@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, PositiveFloat
 
 DR_CLASSES = {
     0: 'No Diabetic Retinopathy',
-    1: 'Positive Retinopathy',
+    1: 'Positive Retinopathy'
 
 }
 app = Flask(__name__)
@@ -16,7 +16,7 @@ model=pickle.load(open("../src/trained_models/65beb5dc65504ab490177d5b45138e0b.s
 
 
 class FormQuery(BaseModel):
-    train_id: str
+    #train_id: str
     ma1: int
     exudate1: float
     exudate2: float
@@ -39,7 +39,7 @@ def home():
 def dr_features():
     return render_template("form.html")
 
-@app.route("/prediction/", methods=['GET', 'POST'])
+@app.route("/prediction/", methods=["GET","POST"])
 def get_prediction():
     if request.method == 'POST':
         ma1 = request.form.get('Ma1',22)
@@ -49,7 +49,7 @@ def get_prediction():
         exudate3 = request.form.get('Exudate3',5.270920)
         exudate31 = request.form.get('Exudate31',0.771761)
         exudate5 = request.form.get('Exudate5',0.018632	)
-        macula_opticdisc_distance = request.form.get('MaculaOpticdiscDistance',0.486903)
+        macula_opticdisc_distance = request.form.get('MaculaDistance',0.486903)
         opticdisc_diameter = request.form.get('OpticdiscDiameter',0.100025)
         
         pred = model.predict(
@@ -68,7 +68,7 @@ def get_prediction():
             ]
         )[0]
         print("working",pred)
-    return render_template("prediction.html",prediction=DR_CLASSES["pred"])
+    return render_template("prediction.html",prediction=DR_CLASSES[pred])
 
 
 
