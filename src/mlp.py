@@ -1,3 +1,6 @@
+import os
+import uuid
+import pickle
 import pandas as pd
 import tensorflow as tf
 from tensorflow.keras import layers, models
@@ -57,3 +60,9 @@ accuracy = accuracy_score(y_test, binary_predictions)
 precision = precision_score(y_test, binary_predictions)
 print(f"The accuracy score of the cnn Model is {round(accuracy,2)}")
 print(f"The F1 score of the CNN is {round(f1,2)}")
+
+unique_id = uuid.uuid4().hex
+if not os.path.exists("trained_models"):            
+    os.makedirs("trained_models")
+    
+pickle.dump(model, open(f"trained_models/mlp-{unique_id}.pkl", "wb"))
